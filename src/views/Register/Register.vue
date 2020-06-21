@@ -1,27 +1,14 @@
 <template>
   <section class="loginContainer">
-    <div class="loginInner">
+    <div class="registerInner">
       <div class="login_header">
         <h2 class="login_logo">CVTE活动中心</h2>
-        <div class="login_header_title">
-          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
-          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay=false">密码登录</a>
+          <div class="login_header_title">
+            <h4 style="margin:0; ">用户注册</h4>
         </div>
       </div>
       <div class="login_content">
-        <form @submit.prevent="login">
-          <div :class="{on: loginWay}">
-            <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button :disabled="!rightPhone" class="get_verification" :class="{right_phone:rightPhone}" @click.prevent="getCode">{{computeTime>0 ? `(${computeTime}s)已发送` : '获取验证码'}}</button>
-            </section>
-            <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码" v-model="code">
-            </section>
-            <section class="login_hint">
-              温馨提示：由于未开通手机短信功能，暂时无法使用手机号码登录。
-            </section>
-          </div>
+        <form @submit.prevent="register">
 
           <div :class="{on: !loginWay}">
             <section>
@@ -36,16 +23,30 @@
                   <span class="switch_text">{{showPwd ? 'abc' : '...'}}</span>
                 </div>
               </section>
+              <section class="login_verification">
+                <input type="text" maxlength="8" placeholder="再次输入密码" v-if="showPwd" v-model="pwd_confirm">
+                <input type="password" maxlength="8" placeholder="再次输入密码" v-else v-model="pwd_confirm">
+              </section>
+              <section class="login_message">
+                <input type="text" maxlength="11" placeholder="真实姓名" v-model="real_name">
+              </section>
+            <section class="login_message">
+              <input type="tel" maxlength="11" placeholder="手机号" v-model="mobile">
+            </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
                 <img class="get_verification" src="./images/captcha.svg" alt="captcha" ref="captcha">
               </section>
+              <section class="login_hint">
+                温馨提示：
+                点击注册代表已同意
+                <a href="javascript:;">《用户服务协议》</a>
+              </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit">注册</button>
         </form>
-        <a href="javascript:;" class="about_us" @click="$router.replace('/register')">未有账号?点击注册</a>
-  
+        <a href="javascript:;" class="about_us" @click="$router.replace('/login')">已有账号?点击登录</a>
       </div>
       <!--利用$router.back()返回上一级路由 -->
       <a href="javascript:" class="go_back" @click="$router.back()">
@@ -55,12 +56,11 @@
     <AlertTip :alertText="alertText" v-show="alertShow" @closeTip="closeTip"/>
   </section>
 
-
 </template>
 <script>
 
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
-import {reqPwdLogin} from '../../api'
+import {reqPwdRegister} from '../../api'
 export default {
   data () {
     return {
@@ -68,6 +68,9 @@ export default {
       computeTime: 0,
       showPwd: false, // 是否显示密码
       pwd: '',
+      pwd_confirm: '',
+      mobile: '',
+      real_name: '',
       name: '', // 用户名
       code: '', // 短信验证码
       alertText: '', // 提示文本
@@ -75,18 +78,17 @@ export default {
     }
   },
   computed: {
-        rightPhone () {
-      // 利用正则对手机号进行匹配，返回布尔值
-      return /^1\d{10}$/.test(this.phone)
-    }
   },
   methods: {
-
-    // 异步登录
-    async login () {
+    rightPhone (mobile) {
+      // 利用正则对手机号进行匹配，返回布尔值
+      return /^1\d{10}$/.test(mobile)
+    },
+    // 异步注册
+    async register () {
       let result
       // 前台表单验证
-      const {name, pwd, captcha} = this
+      const {name, pwd,pwd_confirm,real_name, mobile,captcha} = this
       if (!this.name) {
         // 用户名必须指定
         this.showAlert('用户名必须指定')
@@ -95,14 +97,28 @@ export default {
         // 密码必须指定
         this.showAlert('密码必须指定')
         return
-      } else if (!this.captcha) {
+      } else if (!this.pwd_confirm) {
+        // 再次密码必须指定
+        this.showAlert('再此确认密码必须指定')
+        return
+      } else if (this.pwd_confirm!=this.pwd) {
+        // 密码必须指定
+        this.showAlert('两次输入的密码必须相同')
+        return
+      } else if (!this.mobile) {
+        this.showAlert('手机号码必须指定')
+        return
+      }else if (!this.rightPhone(this.mobile)) {
+        this.showAlert('手机号码格式不正确')
+        return
+      }else if (!this.captcha) {
         // 验证码必须指定
         this.showAlert('验证码必须指定')
         return
       }
      
       // 发送ajax请求密码登陆
-      result = await reqPwdLogin({name, pwd ,captcha})
+      result = await reqPwdRegister({name, pwd ,pwd_confirm,real_name,mobile,captcha})
       
       // 根据结果数据处理
       if (result.code === 0) {
@@ -110,13 +126,12 @@ export default {
 
         // 将user保存到vuex的state
         this.$store.dispatch('recordUser', user)
-        // 去个人中心界面
+        // 中心
         this.$router.replace('/')
       } else {
         const msg = result.msg
         this.showAlert(msg)
       }
-
 
     },
     
@@ -136,14 +151,14 @@ export default {
   }
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scope>
   @import "../../common/stylus/mixins.styl"
   .loginContainer
     width 100%
     height 100%
     background #fff
-    .loginInner
-      padding-top 60px
+    .registerInner
+      padding-top 10px
       width 80%
       margin 0 auto
       .login_header
@@ -153,7 +168,7 @@ export default {
           color #02a774
           text-align center
         .login_header_title
-          padding-top 40px
+          padding-top 0px
           text-align center
           >a
             color #333

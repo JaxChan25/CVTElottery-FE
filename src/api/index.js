@@ -12,10 +12,14 @@ const BASE_URL = 'http://47.107.119.93:8000/api/v1'
  * 账号密码登录
  */
 export const reqPwdLogin = ({name, pwd}) => ajax(BASE_URL + '/user/login', {"user_name":name, "password":pwd}, 'POST')
+
 /**
- * 获取短信验证码
+ * 账号注册
  */
-export const reqSendCode = phone => ajax(BASE_URL + '/sendcode', {phone})
+export const reqPwdRegister = ({name, pwd ,pwd_confirm,real_name,mobile}) => ajax(BASE_URL + '/user/register',
+     {"user_name":name, "password":pwd,"password_confirm":pwd_confirm,"real_name":real_name,"mobile":mobile,}, 'POST')
+
+ 
 
 /**
  * 获取用户信息(根据会话)
