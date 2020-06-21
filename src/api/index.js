@@ -29,3 +29,12 @@ export const reqUserInfo = () => ajax(BASE_URL + '/userinfo')
  * 请求登出
  */
 export const reqLogout = () => ajax(BASE_URL + '/logout')
+
+/**
+ * 添加地址
+ */
+export const reqAddressPost = ({ user_id,province,city,district,detail}) => ajax(BASE_URL + '/address',
+{"game_user_id":user_id, "province":province,"city":city,"district":district,"detail":detail,}, 'POST')
+
+
+

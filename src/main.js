@@ -3,6 +3,14 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import axios from 'axios'
+axios.defaults.withCredentials = true; //让ajax携带cookie
+Vue.prototype.$axios = axios;
+
+
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+
 // 引入VueLazyload插件
 import VueLazyload from 'vue-lazyload'
 // 将一张loading图片加载进来
@@ -16,6 +24,9 @@ import './filters'
 // 注冊全局组件标签
 import {Button} from 'mint-ui'
 Vue.component(Button.name, Button) // <mt-button>
+import VDistpicker from 'v-distpicker'
+Vue.component('v-distpicker', VDistpicker)
+
 
 FastClick.attach(document.body)
 Vue.config.productionTip = false

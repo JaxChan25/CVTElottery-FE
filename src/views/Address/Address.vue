@@ -1,122 +1,140 @@
 <template>
   <section class="loginContainer">
-    <div class="loginInner">
-      <div class="login_header">
-        <h2 class="login_logo">CVTE活动中心</h2>
-        <div class="login_header_title">
-          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
-          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay=false">密码登录</a>
-        </div>
+    <div class="registerInner">
+  
+    <div>
+   
+      <HeaderTop title="填写收货信息">
+        <a href="javascript:" slot="left" class="header_search" @click="$router.back()">
+          <span class="header_login_text">
+          &lt;
+          </span>
+        </a>
+        <span class="header_login" slot="right">
+        <router-link  :to="'/login'">
+        <span class="header_login_text" v-if="!userInfo.id">
+          登录|注册
+        </span>
+        </router-link>
+        <span class="header_login_text" v-if="userInfo.id">
+          {{userInfo.user_name}}
+        </span>
+        </span>
+      </HeaderTop> 
+    </div>
+
+    <div class="login_header">
+    <h3 class="address_logo">CVTE活动中心</h3>
+      <div class="login_header_title">
+        <h3 style="margin:0; ">请填写并认真核对您的收货信息，实物奖品我们将通过快递的形式寄送，具体发货时间请查看活动规则。</h3>
       </div>
-      <div class="login_content">
-        <form @submit.prevent="login">
-          <div :class="{on: loginWay}">
-            <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button :disabled="!rightPhone" class="get_verification" :class="{right_phone:rightPhone}" @click.prevent="getCode">{{computeTime>0 ? `(${computeTime}s)已发送` : '获取验证码'}}</button>
-            </section>
-            <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码" v-model="code">
-            </section>
-            <section class="login_hint">
-              温馨提示：由于未开通手机短信功能，暂时无法使用手机号码登录。
-            </section>
-          </div>
+    </div>
+
+    <div class="login_content">
+        <form @submit.prevent="postaddress">
 
           <div :class="{on: !loginWay}">
-            <section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="用户名" v-model="name">
+                <input type="text" maxlength="11" placeholder="真实姓名" v-model="real_name">
               </section>
-              <section class="login_verification">
-                <input type="text" maxlength="8" placeholder="密码" v-if="showPwd" v-model="pwd">
-                <input type="password" maxlength="8" placeholder="密码" v-else v-model="pwd">
-                <div class="switch_button off" :class="showPwd?'on':'off'" @click="showPwd=!showPwd">
-                  <div class="switch_circle" :class="{right: showPwd}"></div>
-                  <span class="switch_text">{{showPwd ? 'abc' : '...'}}</span>
-                </div>
-              </section>
-              <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha" ref="captcha">
-              </section>
+            <section class="login_message">
+              <input type="tel" maxlength="11" placeholder="手机号" v-model="mobile">
+            </section>
+            
+            <v-distpicker type="mobile" @province="onChangeProvince" @city="onChangeCity" @area="onChangeArea"></v-distpicker>
+         
+            <section class="login_message">
+              <input type="texteare" placeholder="详细地址" v-model="detail">
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit">确定提交</button>
         </form>
-        <a href="javascript:;" class="about_us" @click="$router.replace('/register')">未有账号?点击注册</a>
-  
+         
       </div>
-      <!--利用$router.back()返回上一级路由 -->
-      <a href="javascript:" class="go_back" @click="$router.back()">
-        <i class="iconfont icon-arrow-left"></i>
-      </a>
-    </div>
-    <AlertTip :alertText="alertText" v-show="alertShow" @closeTip="closeTip"/>
+      <AlertTip :alertText="alertText" v-show="alertShow" @closeTip="closeTip"/>
+     </div>
   </section>
-
-
 </template>
-<script>
 
+<script>
+import {mapState} from 'vuex'
+import HeaderTop from '../../components/HeaderTop/HeaderTop.vue'
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
-import {reqPwdLogin} from '../../api'
+import {reqAddressPost} from '../../api'
+import VDistpicker from 'v-distpicker'
+
 export default {
   data () {
     return {
+      user_id: this.$store.state.userInfo.id,
       loginWay: false, // true代表短信登陆, false代表密码
-      computeTime: 0,
-      showPwd: false, // 是否显示密码
-      pwd: '',
-      name: '', // 用户名
-      code: '', // 短信验证码
+      detail: '',
+      mobile: '',
+      real_name: '',
+      province: '',
+      city: '',
+      district: '',
       alertText: '', // 提示文本
       alertShow: false // 是否显示警告框
     }
   },
-  computed: {
-        rightPhone () {
-      // 利用正则对手机号进行匹配，返回布尔值
-      return /^1\d{10}$/.test(this.phone)
-    }
+  components: {
+    HeaderTop,
+    AlertTip,
+    VDistpicker 
   },
-  methods: {
-
-    // 异步登录
-    async login () {
+  computed: {
+    ...mapState(['userInfo'])
+  },
+    methods: {
+    choose(){
+      this.show=!this.show
+    },
+    onChangeProvince(a){
+      this.province = a.value
+    },    
+    onChangeCity(a){
+      this.city = a.value 
+    },
+    onChangeArea(a){
+      this.district = a.value
+      this.show=false
+    },
+ 
+    // 异步注册
+    async postaddress () {
       let result
       // 前台表单验证
-      const {name, pwd, captcha} = this
-      if (!this.name) {
+      const {user_id,province,city,district,detail} = this
+      if (!this.province) {
         // 用户名必须指定
-        this.showAlert('用户名必须指定')
+        this.showAlert('省份必须指定')
         return
-      } else if (!this.pwd) {
+      } else if (!this.city) {
         // 密码必须指定
-        this.showAlert('密码必须指定')
+        this.showAlert('市必须指定')
         return
-      } else if (!this.captcha) {
-        // 验证码必须指定
-        this.showAlert('验证码必须指定')
+      } else if (!this.district) {
+        // 再次密码必须指定
+        this.showAlert('区必须指定')
         return
-      }
+      } else if (!this.detail) {
+        // 密码必须指定
+        this.showAlert('详细地址必须指定')
+        return
+      } 
      
       // 发送ajax请求密码登陆
-      result = await reqPwdLogin({name, pwd ,captcha})
+      result = await reqAddressPost({ user_id,province,city,district,detail})
       
       // 根据结果数据处理
       if (result.code === 0) {
-        const user = result.data
-
-        // 将user保存到vuex的state
-        this.$store.dispatch('recordUser', user)
-        // 去个人中心界面
-        this.$router.replace('/address')
+        this.showAlert('地址添加成功！')
+        return
       } else {
         const msg = result.msg
         this.showAlert(msg)
       }
-
 
     },
     
@@ -131,29 +149,27 @@ export default {
     },
 
   },
-  components: {
-    AlertTip
-  }
 }
 </script>
+
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixins.styl"
-  .loginContainer
+ .loginContainer
     width 100%
     height 100%
     background #fff
-    .loginInner
-      padding-top 60px
+    .registerInner
+      padding-top 20px
       width 80%
       margin 0 auto
       .login_header
-        .login_logo
+        .address_logo
           font-size 40px
           font-weight bold
           color #02a774
           text-align center
         .login_header_title
-          padding-top 40px
+          padding-top 0px
           text-align center
           >a
             color #333
