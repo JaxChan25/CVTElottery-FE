@@ -2,83 +2,18 @@
   <div class="wap" v-title="'抽奖'" ref="wap">
     <div class="banner">
       <img class="bannerImg" src="../../assets/img/lottery/banner.png" alt="">
-      <div class="prizeInfoBtn" @click="lotteryRecord" v-show="hasRecord">
-        <img class="prizeInfoBtnImg" src="../../assets/img/lottery/prizeInfo.png" alt="">
-      </div>
+
       <div class="priceChanceBtn">
         您有{{remainingTimes}}次抽奖机会
       </div>
-      <div class="whiteBar1 whiteBar">
-        <img src="../../assets/img/lottery/whiteBar.png" alt="">
-      </div>
-      <div class="whiteBar2 whiteBar">
-        <img src="../../assets/img/lottery/whiteBar.png" alt="">
-      </div>
-      <div class="whiteBar3 whiteBar">
-        <img src="../../assets/img/lottery/whiteBar.png" alt="">
-      </div>
-      <div class="whiteBar4 whiteBar">
-        <img src="../../assets/img/lottery/whiteBar.png" alt="">
-      </div>
     </div>
+
     <div class="box">
-      <div v-for="imgLi in prizeList" :key="imgLi.picUrlDesc" ref="pice" :style="{'backgroundImage':'url('+imgLi.bgSrc+')'}">
+      <div v-for="imgLi in prizeList" :key="imgLi.picUrlDesc" ref="pice" :style="{'background-color':'#FFFFFF'}">
         <img :src="imgLi.picUrlDesc" v-if="imgLi.picUrlDesc" />
       </div>
     </div>
-    <div class="prizers">
-      <div class="prizeBar">
-        <img src="../../assets/img/lottery/prizers.png" alt="">
-      </div>
-      <div class="prizer">
-        <div class="prizeIcon">
-          <img src="../../assets/img/lottery/prizeIcon.png" alt="">
-        </div>
-        <div class="prizerList" id="prizerList">
-          <ul id="prizerList1">
-            <li v-for="item in prizers" :key="item.id">
-              <span>{{item.name}}</span>
-              <span>{{item.mobile| mobileTurn}}</span>
-              <span class="prizeName">{{item.commodityName}}</span>
-            </li>
-          </ul>
-          <ul id="prizerList2"></ul>
-        </div>
-      </div>
-    </div>
-    <div class="info">
-      <div class="title">
-        <div class="squire squire1">
-          <img src="../../assets/img/lottery/three.png" alt="">
-        </div>
-        <span>奖品说明</span>
-        <div class="squire squire2">
-          <img src="../../assets/img/lottery/three.png" alt="">
-        </div>
-      </div>
-      <div class="infoContent">
-        <ul>
-          <li v-for="item in prizeDesc" :key="item"> {{item}}</li>
-        </ul>
-      </div>
-    </div>
-    <div class="info">
-      <div class="title">
-        <div class="squire squire1">
-          <img src="../../assets/img/lottery/three.png" alt="">
-        </div>
-        <span>活动说明</span>
-        <div class="squire squire2">
-          <img src="../../assets/img/lottery/three.png" alt="">
-        </div>
-      </div>
-      <div class="infoContent">
-        <ul>
-          <li v-for="item in lotteryDesc" :key="item"> {{item}}</li>
-        </ul>
-      </div>
-    </div>
-    
+
     <div class="massage" v-show="prizeInfoShow" @touchmove="touchMove($event)">
       <div class="noPrize" v-if="noPrizeShow">
         <div class="close" @click="close()">
@@ -120,26 +55,17 @@
     </div>
   </div>
 </template>
-
 <script>
 import noSelect from '@/assets/img/lottery/border.png'
 import isSelect from '@/assets/img/lottery/borderSelect.png'
 import notStart from '@/assets/img/lottery/noStart.png'
 import endLottery from '@/assets/img/lottery/endLottery.png'
 import prizeBtn from '@/assets/img/lottery/prizeBtn.png'
-import {mapState} from 'vuex'
-//import AlertTip from '../../components/AlertTip/AlertTip.vue'
 import { Toast } from 'mint-ui'
 export default {
-    data () {
+  data () {
     return {
-      user_id: this.$store.state.userInfo.id,
-      activity_id:this.$route.params.activityID,
-      surplus_time:'',
-      alertText: '', // 提示文本
-      alertShow: false, // 是否显示警告框
-      //抽奖
-            swiperName: { // 获奖名单
+      swiperName: { // 获奖名单
         loop: true, // 当获奖人数大于等于5的时候滚动，否则不滚动
         direction: 'vertical',
         slidesPerView: 5,
@@ -177,12 +103,6 @@ export default {
       startStatus: '' // 活动开始的状态
     }
   },
-  components: {
-    //AlertTip
-  },
-  computed: {
-    ...mapState(['userInfo'])
-  },
   beforeRouteEnter (to, from, next) {
     document.title = '抽奖'
     next()
@@ -192,14 +112,15 @@ export default {
       this.get()
     })
   },
-    // 销毁组件重新加载
+
+  // 销毁组件重新加载
   deactivated () {
     this.$destroy()
   },
   methods: {
 
     get () {
-      this.$http.get('../../../static/data/lotteryInfo.json').then((myData) => {
+      this.$axios.get('/data/lotteryInfo.json').then((myData) => {
         // console.log(myData)
         let res = myData.data
         if (res.success) {
@@ -419,17 +340,16 @@ export default {
   }
 }
 </script>
-
 <style lang="less" scoped>
 .wap {
   background: linear-gradient( #337cf6, #49a6f8); // background: #439AF7;
   .banner {
     width: 100%;
-    height: 3.2rem;
+    height: 2.5rem;
     position: relative;
     .bannerImg {
       width: 100%;
-      height: 3.2rem;
+      height: 2.5rem;
     }
     .prizeInfoBtn {
       width: 2rem;

@@ -1,7 +1,9 @@
 <template>
-    <div id="app">
-        <router-view/>
-    </div>
+  <div id="app">
+    <navigation>
+      <router-view></router-view>
+    </navigation>
+  </div>
 </template>
 
 <script>
@@ -14,10 +16,17 @@ export default {
 }
 </script>>
 
-<style lang="stylus" rel="stylesheet/stylus">
-// 整个应用组件的样式
-  #app
-    width 100%
-    height 100%
-    background #f5f5f5
+<style>
+#app {
+  min-height: 100%;
+}
+
+.slide-right-enter-active {
+  transition: 0.3s all ease;
+}
+
+.slide-right-enter {
+  opacity: 1;
+  transform: translateX(100%);
+}
 </style>

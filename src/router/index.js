@@ -1,5 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import {
+  lottery,
+  lotteryRecord
+} from './router_lottery'
+
 //import Home from '../views/Home.vue'
 //import Login from '../views/Login/Login.vue'
 //import Register from '../views/Register/Register.vue'
@@ -35,7 +40,8 @@ Vue.use(VueRouter)
   {
     path: '/activity/:activityID',
     component: Activity
-  }
+  },
+  lottery, lotteryRecord
 ]
 
 const router = new VueRouter({

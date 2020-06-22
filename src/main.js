@@ -3,13 +3,20 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import './assets/js/rem'
+import './assets/less/public.less'
+
 import axios from 'axios'
 axios.defaults.withCredentials = true; //让ajax携带cookie
 Vue.prototype.$axios = axios;
 
 
-import VueCookies from 'vue-cookies'
-Vue.use(VueCookies)
+
+import Navigation from 'vue-navigation'
+Vue.use(Navigation, {
+  router
+})
+
 
 // 引入VueLazyload插件
 import VueLazyload from 'vue-lazyload'
@@ -34,6 +41,8 @@ Vue.config.productionTip = false
 Vue.use(VueLazyload, { // 内部自定义一个指令lazy
   loading
 })
+
+
 
 new Vue({
   router,
