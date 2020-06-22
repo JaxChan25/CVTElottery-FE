@@ -38,7 +38,7 @@
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha" ref="captcha">
+                <img class="get_verification" src="@/assets/captcha.svg">
               </section>
             </section>
           </div>

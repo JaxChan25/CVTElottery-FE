@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 //import Login from '../views/Login/Login.vue'
 //import Register from '../views/Register/Register.vue'
 
-const Home = ()=> import ('../views/Home.vue');
+//const Home = ()=> import ('../views/Home.vue');
 const Login = ()=> import ('../views/Login/Login.vue');
 const Register = ()=> import ('../views/Register/Register.vue');
 const Activity = ()=> import ('../views/Activity/Activity.vue');
@@ -18,7 +18,7 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    component: Home
+    component: Login
   },
   {
     path: '/register',
@@ -39,7 +39,7 @@ Vue.use(VueRouter)
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
