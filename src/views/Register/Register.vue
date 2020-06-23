@@ -159,11 +159,14 @@ export default {
       margin 0 auto
       .login_header
         .login_logo
+          padding-top 10px
+          margin 10px auto
           font-size 40px
           font-weight bold
           color #02a774
           text-align center
         .login_header_title
+          margin 10px auto
           padding-top 0px
           text-align center
           >a
@@ -252,7 +255,8 @@ export default {
                   &.right
                     transform translateX(30px)
             .login_hint
-              margin-top 12px
+              text-align center
+              margin-top 20px
               color #999
               font-size 14px
               line-height 20px
@@ -272,8 +276,9 @@ export default {
             border 0
         .about_us
           display block
+          height 40px
           font-size 12px
-          margin-top 20px
+          margin-top 50px
           text-align center
           color #999
       .go_back

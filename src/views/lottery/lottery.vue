@@ -9,16 +9,32 @@
     </div>
 
     <div class="box">
-      <p class="report">XXX获得了一等奖</p>
+
+
+<div class="prizers">
+      <div class="prizer">
+        <div class="prizerList" id="prizerList">
+          <ul id="prizerList1">
+            <li v-for="item in prizers" :key="item.id">
+              <span>{{item.name}}</span>
+              <span>{{item.mobile| mobileTurn}}</span>
+              <span class="prizeName">{{item.commodityName}}</span>
+            </li>
+          </ul>
+          <ul id="prizerList2"></ul>
+        </div>
+      </div>
+    </div>
+
       <div class="container">
         <div class="item" v-for="(imgLi,index) in prizeList" :key="index" ref="pice" :style="{'background-color':'none'}">
           <p class="times" v-if="index==7">你还有{{remainingTimes}}次抽奖机会</P>
           <img :src="imgLi.picUrlDesc" v-if="imgLi.picUrlDesc" />
         </div>
       </div>
-      <div>
-        <button class="priceChanceBtn">活动规则</button>
-        <button class="priceChanceBtn2">活动规则</button>
+      <div >
+        <button class="priceChanceBtn" @click="rule">活动规则</button>
+        <button class="priceChanceBtn2" @click="record">中奖记录</button>
       </div>
     </div>
     
@@ -37,6 +53,7 @@
         </div>
       </div>
       <img src="../../assets/img/lottery/circleLight.png" class="circleLight" v-if="havePrizeShow" alt="">
+
       <div class="havePrize" v-if="havePrizeShow">
         <div class="oneBar">
           <img src="../../assets/img/lottery/yellowCycle.png" />
@@ -49,6 +66,36 @@
           <a>立即领取</a>
         </div>
       </div>
+
+
+      <div class="havePrize" v-if="haverule">
+        <div class="oneBar">
+          <img src="../../assets/img/lottery/yellowCycle.png" />
+        </div>
+        <p>活动规则</p>
+        <div class="message">
+          <p class="message">{{lotteryDesc}}</p>
+        </div>
+        <div class="btn" @click="closerule">
+          <a>关闭规则</a>
+        </div>
+      </div>
+
+
+      <div class="havePrize" v-if="haverecord">
+        <div class="oneBar">
+          <img src="../../assets/img/lottery/yellowCycle.png" />
+        </div>
+        <p>中奖名单</p>
+        <div class="message">
+          <p class="message">{{prizers}}</p>
+        </div>
+        <div class="btn" @click="closerecord">
+          <a>关闭名单</a>
+        </div>
+      </div>
+
+
       <div class="haveLottery" v-if="haveLottery">
         <div class="close" @click="close()">
           <img src="../../assets/img/lottery/close.png" alt="">
@@ -65,8 +112,8 @@
   </div>
 </template>
 <script>
-import noSelect from '@/assets/img/lottery/border.png'
-import isSelect from '@/assets/img/lottery/borderSelect.png'
+import noSelect from '@/assets/img/lottery/noselect.png'
+import isSelect from '@/assets/img/lottery/isselect.png'
 import notStart from '@/assets/img/lottery/noStart.png'
 import endLottery from '@/assets/img/lottery/endLottery.png'
 import prizeBtn from '@/assets/img/lottery/prizeBtn.png'
@@ -92,6 +139,8 @@ export default {
       noPrizeShow: false, // 没中奖
       havePrizeShow: false, // 中奖了
       haveLottery: false, // 已经抽过奖了
+      haverule:false,
+      haverecord:false,
       timer1: '',
       timer2: '',
       s1: '',
@@ -131,7 +180,7 @@ export default {
 
     get () {
       this.$axios.get('/data/lotteryInfo.json').then((myData) => {
-        // console.log(myData)
+         console.log("getdata")
         let res = myData.data
         if (res.success) {
           document.title = res.data.title
@@ -176,13 +225,13 @@ export default {
       this.$nextTick(() => {
         if (c < s) { // 当前时间小于开始时间，未开始
           this.startStatus = 0
-          this.$refs.pice[0].style.backgroundImage = 'url(' + notStart + ')'
+          this.$refs.pice[4].style.backgroundImage = 'url(' + notStart + ')'
         } else if (c > s && c < e) { // 当前时间大于开始时间，并且小于结束时间，已经开始未结束
           this.startStatus = 1
-          this.$refs.pice[0].style.backgroundImage = 'url(' + prizeBtn + ')'
+          this.$refs.pice[4].style.backgroundImage = 'url(' + prizeBtn + ')'
         } else if (c > e) { // 当前时间大于结束时间，已经结束
           this.startStatus = 2
-          this.$refs.pice[0].style.backgroundImage = 'url(' + endLottery + ')'
+          this.$refs.pice[4].style.backgroundImage = 'url(' + endLottery + ')'
         }
       })
     },
@@ -237,13 +286,13 @@ export default {
       this.timer2 = setInterval(this.move, 300)
       setTimeout(() => { // 顺序打乱
         if (this.prozeLevel == 2) {
-          this.s2 = 7
-        } else if (this.prozeLevel == 3) {
-          this.s2 = 4
-        } else if (this.prozeLevel == 4) {
-          this.s2 = 3
-        } else if (this.prozeLevel == 7) {
           this.s2 = 2
+        } else if (this.prozeLevel == 3) {
+          this.s2 = 3
+        } else if (this.prozeLevel == 4) {
+          this.s2 = 4
+        } else if (this.prozeLevel == 7) {
+          this.s2 = 7
         } else {
           this.s2 = this.prozeLevel
         }
@@ -266,6 +315,7 @@ export default {
         }, 30)
       })
     },
+    
     prizeZhuan () {
       this.$nextTick(() => {
         this.$refs.pice[4].onclick = () => {
@@ -275,7 +325,7 @@ export default {
               if (this.startStatus === 1) { // 活动开始
                 this.clickFlage = false// 不能点击
                 this.timer1 = setInterval(this.move, 100)
-                this.$http.get('../../../static/data/prizeInfo.json').then((myData) => {
+                /*this.$http.get('../../../static/data/prizeInfo.json').then((myData) => {
                   let res = myData.data
                   console.log(res)
                   if (res.success) {
@@ -301,8 +351,18 @@ export default {
                     // }, 1500)
                   }
                 }, false, true)
+                */
                 // this.timer1 = setInterval(this.move, 100)
                 // 请求，返回后给s定值
+
+                    this.prozeLevel = 1
+                    this.prizeName = "华为 P10 Plus 全网通 4G 手机 双卡双待-6G+128G-玫瑰金"
+                    this.prizeUrl = "http://qdtalk.com/wp-content/uploads/2017/09/1-1.png"
+                    setTimeout(() => {
+                      clearInterval(this.timer1)
+                      this.lowSpeed()
+                    }, 1200)
+
               } else if (this.startStatus === 0) { // 没开始
                 Toast({
                   message: '活动尚未开始',
@@ -344,6 +404,25 @@ export default {
       this.prizeInfoShow = false // 显示中奖信息的遮罩层
       this.noPrizeShow = false// 没中奖
     },
+    rule(){
+      this.prizeInfoShow=true
+      this.haverule=true
+    },
+    record(){
+      this.prizeInfoShow=true
+      this.haverecord=true
+    },
+
+    closerecord(){
+      this.prizeInfoShow=false
+      this.haverecord=false
+    },
+
+    closerule(){
+      this.prizeInfoShow=false
+      this.haverule=false
+    },
+
     lotteryRecord () {
       this.$router.push({
         name: 'lotteryRecord',
@@ -449,7 +528,7 @@ export default {
   overflow: hidden;
   .box {
     margin: 0 auto;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     width: 6.9rem;
     height: 7.5rem;
     padding: 0.35rem;
@@ -464,7 +543,7 @@ export default {
     //background: linear-gradient(white, white) padding-box,
     //repeating-linear-gradient(45deg, #FFDE00 0%, #FFDE00 4.6%, #3EAAFF 0, #3EAAFF 10%) 0 / 6.9rem 6.9rem;
     .container{
-    margin-top: 0.26rem;
+    margin-top: 0.2rem;
     margin-left: 0.24rem;
     width: 100%;
     height: 100%;
@@ -540,27 +619,18 @@ export default {
     }
   }
   .prizers {
-    height: 4.8rem;
-    width: 6.9rem;
+    height: 0.5rem;
+    width: 5rem;
     position: relative;
-    margin: 1rem auto 0.5rem;
-    .prizeBar {
-      height: 0.3rem;
-      width: 6.9rem;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
+    text-align: center;
+    margin-left: 0.8rem;
     .prizer {
-      width: 6.2rem;
-      height: 4.5rem;
-      background-color: #fff;
-      position: absolute;
+      width: 5rem;
+      height: 0.45rem;
+      margin-top: 0.07rem;
       top: 0.16rem;
       left: 0.35rem;
       right: 0.35rem;
-      padding: 0.25rem 0.2rem 0.45rem;
       overflow: hidden;
       box-sizing: border-box;
       .prizeIcon {
@@ -577,8 +647,8 @@ export default {
         height: 3.1rem;
         overflow: hidden; // .swiper-slide {
         li {
-          line-height: 0.62rem;
-          font-size: 0.3rem;
+          line-height: 0.45rem;
+          font-size: 0.27rem;
           color: #232323; // margin-bottom: .2rem;
           overflow: hidden;
           span {
@@ -586,13 +656,13 @@ export default {
               display: block;
               float: left;
               margin-right: 0.63rem;
-              width: 1rem;
+              width: 0.6rem;
               text-align: justify; //两端对齐
               text-align-last: justify;
             }
             &:nth-child(2) {
               float: left;
-              width: 1.75rem;
+              width: 1.7rem;
             }
             &:last-child {
               float: right; // display: inline-block;
@@ -603,7 +673,7 @@ export default {
               overflow: hidden;
               -webkit-line-clamp: 1;
               -webkit-box-orient: vertical;
-              width: 2.1rem;
+              width: 2rem;
             }
           }
         }
@@ -842,6 +912,12 @@ export default {
           height: 100%;
         }
       }
+      .message{
+        margin: 0 auto;
+        height: 2rem;
+        text-align: center;
+        line-height: 2rem;
+      }
       p {
         padding: 0 0.1rem;
         font-size: 0.3rem;
@@ -854,6 +930,8 @@ export default {
         width: 4.1rem;
         height: 2rem;
         margin: 0 auto 0.36rem;
+        line-height: 2rem;
+        text-align: center;
         img {
           width: 100%;
           height: 100%;

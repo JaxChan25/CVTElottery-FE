@@ -163,12 +163,14 @@ export default {
       width 80%
       margin 0 auto
       .login_header
+        margin-top 40px
         .address_logo
           font-size 40px
           font-weight bold
           color #02a774
           text-align center
         .login_header_title
+          margin-top 5px
           padding-top 0px
           text-align center
           >a

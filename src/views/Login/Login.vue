@@ -171,6 +171,7 @@ export default {
             display none
             &.on
               display block
+              height 176px
             input
               width 100%
               height 100%
@@ -241,7 +242,7 @@ export default {
                   &.right
                     transform translateX(30px)
             .login_hint
-              margin-top 12px
+              margin-top 20px
               color #999
               font-size 14px
               line-height 20px
@@ -261,8 +262,9 @@ export default {
             border 0
         .about_us
           display block
+          height 40px
           font-size 12px
-          margin-top 20px
+          margin-top 160px
           text-align center
           color #999
       .go_back
