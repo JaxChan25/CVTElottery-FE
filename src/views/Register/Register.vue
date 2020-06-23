@@ -84,7 +84,7 @@ export default {
     async register () {
       let result
       // 前台表单验证
-      const {name, pwd,pwd_confirm,real_name, mobile,captcha} = this
+      const {name, pwd,pwd_confirm, mobile,captcha} = this
       if (!this.name) {
         // 用户名必须指定
         this.showAlert('用户名必须指定')
@@ -114,7 +114,7 @@ export default {
       }
      
       // 发送ajax请求密码登陆
-      result = await reqPwdRegister({name, pwd ,pwd_confirm,real_name,mobile,captcha})
+      result = await reqPwdRegister({name, pwd ,pwd_confirm,mobile,captcha})
       
       // 根据结果数据处理
       if (result.code === 0) {
