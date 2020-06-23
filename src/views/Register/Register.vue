@@ -27,9 +27,6 @@
                 <input type="text" maxlength="8" placeholder="再次输入密码" v-if="showPwd" v-model="pwd_confirm">
                 <input type="password" maxlength="8" placeholder="再次输入密码" v-else v-model="pwd_confirm">
               </section>
-              <section class="login_message">
-                <input type="text" maxlength="11" placeholder="真实姓名" v-model="real_name">
-              </section>
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="mobile">
             </section>
@@ -70,7 +67,6 @@ export default {
       pwd: '',
       pwd_confirm: '',
       mobile: '',
-      real_name: '',
       name: '', // 用户名
       code: '', // 短信验证码
       alertText: '', // 提示文本

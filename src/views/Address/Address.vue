@@ -35,10 +35,10 @@
 
           <div :class="{on: !loginWay}">
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="真实姓名" v-model="real_name">
+                <input type="text" maxlength="11" placeholder="收件人姓名" v-model="real_name">
               </section>
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号" v-model="mobile">
+              <input type="tel" maxlength="11" placeholder="收件人手机号" v-model="mobile">
             </section>
             
             <v-distpicker type="mobile" @province="onChangeProvince" @city="onChangeCity" @area="onChangeArea"></v-distpicker>
@@ -105,7 +105,7 @@ export default {
     async postaddress () {
       let result
       // 前台表单验证
-      const {user_id,province,city,district,detail} = this
+      const {user_id,real_name,mobile,province,city,district,detail} = this
       if (!this.province) {
         // 用户名必须指定
         this.showAlert('省份必须指定')
@@ -125,7 +125,7 @@ export default {
       } 
      
       // 发送ajax请求密码登陆
-      result = await reqAddressPost({ user_id,province,city,district,detail})
+      result = await reqAddressPost({ user_id,real_name,mobile,province,city,district,detail})
       
       // 根据结果数据处理
       if (result.code === 0) {

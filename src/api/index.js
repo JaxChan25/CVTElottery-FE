@@ -16,8 +16,8 @@ export const reqPwdLogin = ({name, pwd}) => ajax(BASE_URL + '/user/login', {"use
 /**
  * 账号注册
  */
-export const reqPwdRegister = ({name, pwd ,pwd_confirm,real_name,mobile}) => ajax(BASE_URL + '/user/register',
-     {"user_name":name, "password":pwd,"password_confirm":pwd_confirm,"real_name":real_name,"mobile":mobile,}, 'POST')
+export const reqPwdRegister = ({name, pwd ,pwd_confirm,mobile}) => ajax(BASE_URL + '/user/register',
+     {"user_name":name, "password":pwd,"password_confirm":pwd_confirm,"mobile":mobile,}, 'POST')
 
  
 
@@ -33,8 +33,8 @@ export const reqLogout = () => ajax(BASE_URL + '/logout')
 /**
  * 添加地址
  */
-export const reqAddressPost = ({ user_id,province,city,district,detail}) => ajax(BASE_URL + '/address',
-{"game_user_id":user_id, "province":province,"city":city,"district":district,"detail":detail,}, 'POST')
+export const reqAddressPost = ({ user_id,real_name,mobile,province,city,district,detail}) => ajax(BASE_URL + '/address',
+{"game_user_id":user_id, "real_name":real_name,"mobile":mobile,"province":province,"city":city,"district":district,"detail":detail,}, 'POST')
 
 
 

@@ -21,6 +21,7 @@
         <button class="priceChanceBtn2">活动规则</button>
       </div>
     </div>
+    
 
     <div class="massage" v-show="prizeInfoShow" @touchmove="touchMove($event)">
       <div class="noPrize" v-if="noPrizeShow">
@@ -358,6 +359,7 @@ export default {
 <style lang="less" scoped>
 .wap {
   background: linear-gradient( #ff6412, #ff7d16); // background: #439AF7;
+  
   .banner {
     width: 100%;
     height: 2.3rem;
@@ -409,7 +411,6 @@ export default {
       text-align: center;
       padding: .06rem .4rem;
     }
-
     .whiteBar {
       position: absolute;
       z-index: 0;

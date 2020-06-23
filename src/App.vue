@@ -19,6 +19,7 @@ export default {
 <style>
 #app {
   min-height: 100%;
+  background: #f5f5f5
 }
 
 .slide-right-enter-active {
