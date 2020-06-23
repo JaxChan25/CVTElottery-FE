@@ -1,16 +1,24 @@
 <template>
   <div class="wap" v-title="'抽奖'" ref="wap">
     <div class="banner">
-      <img class="bannerImg" src="../../assets/img/lottery/banner.png" alt="">
-
-      <div class="priceChanceBtn">
-        您有{{remainingTimes}}次抽奖机会
-      </div>
+      
+      <p class="priceChanceBtn">{{title}}</p>
+      <p class="priceChanceBtn2">现在有n人参加活动</p>
+      <p style="display: none">{{remainingTimes}}</p>
+      
     </div>
 
     <div class="box">
-      <div v-for="imgLi in prizeList" :key="imgLi.picUrlDesc" ref="pice" :style="{'background-color':'#FFFFFF'}">
-        <img :src="imgLi.picUrlDesc" v-if="imgLi.picUrlDesc" />
+      <p class="report">XXX获得了一等奖</p>
+      <div class="container">
+        <div class="item" v-for="(imgLi,index) in prizeList" :key="index" ref="pice" :style="{'background-color':'none'}">
+          <p class="times" v-if="index==7">你还有{{remainingTimes}}次抽奖机会</P>
+          <img :src="imgLi.picUrlDesc" v-if="imgLi.picUrlDesc" />
+        </div>
+      </div>
+      <div>
+        <button class="priceChanceBtn">活动规则</button>
+        <button class="priceChanceBtn2">活动规则</button>
       </div>
     </div>
 
@@ -76,7 +84,7 @@ export default {
       },
       // mobile: '15114785236',
       prizeIndex: 0,
-      arrNum: [0, 1, 2, 5, 8, 7, 6, 3], // 定义转动的顺序
+      arrNum: [0, 1, 2, 5, 8, 11, 10, 9, 6, 3], // 定义转动的顺序
       clickFlage: true, // 点击事件，防止重复点击
 
       prizeInfoShow: false, // 显示中奖信息的遮罩层
@@ -100,7 +108,8 @@ export default {
       prizeUrl: '', // 奖品图片
       prizers: [], // 获奖名单
       timeFlag: 0, // 时间标记，抽奖请求时间过长，则返回错误
-      startStatus: '' // 活动开始的状态
+      startStatus: '', // 活动开始的状态
+      title:'活动的名称'//活动名称
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -133,15 +142,19 @@ export default {
             this.$set(item, 'bgSrc', noSelect)
           })
           res.data.prizeInfo.splice(4, 0, ' ')
+          res.data.prizeInfo.splice(7, 0, ' ')
           this.prizeList[0] = res.data.prizeInfo[0]
-          this.prizeList[6] = res.data.prizeInfo[1]
-          this.prizeList[5] = res.data.prizeInfo[2]
+          this.prizeList[1] = res.data.prizeInfo[1]
+          this.prizeList[2] = res.data.prizeInfo[2]
+          this.prizeList[3] = res.data.prizeInfo[3]
           this.prizeList[4] = res.data.prizeInfo[4]
-          this.prizeList[2] = res.data.prizeInfo[3]
-          this.prizeList[8] = res.data.prizeInfo[5]
-          this.prizeList[7] = res.data.prizeInfo[6]
-          this.prizeList[1] = res.data.prizeInfo[7]
-          this.prizeList[3] = res.data.prizeInfo[8]
+          this.prizeList[5] = res.data.prizeInfo[5]
+          this.prizeList[6] = res.data.prizeInfo[6]
+          this.prizeList[7] = res.data.prizeInfo[7]
+          this.prizeList[8] = res.data.prizeInfo[8]
+          this.prizeList[9] = res.data.prizeInfo[9]
+          this.prizeList[10] = res.data.prizeInfo[10]
+          this.prizeList[11] = res.data.prizeInfo[11]
           this.prizers = res.data.winners
           this.statusFun(res.data.currTime, res.data.beginTime, res.data.endTime)// 获取状态，开始，未开始，结束
           if (this.prizers && this.prizers.length > 5) {
@@ -162,27 +175,29 @@ export default {
       this.$nextTick(() => {
         if (c < s) { // 当前时间小于开始时间，未开始
           this.startStatus = 0
-          this.$refs.pice[4].style.backgroundImage = 'url(' + notStart + ')'
+          this.$refs.pice[0].style.backgroundImage = 'url(' + notStart + ')'
         } else if (c > s && c < e) { // 当前时间大于开始时间，并且小于结束时间，已经开始未结束
           this.startStatus = 1
-          this.$refs.pice[4].style.backgroundImage = 'url(' + prizeBtn + ')'
+          this.$refs.pice[0].style.backgroundImage = 'url(' + prizeBtn + ')'
         } else if (c > e) { // 当前时间大于结束时间，已经结束
           this.startStatus = 2
-          this.$refs.pice[4].style.backgroundImage = 'url(' + endLottery + ')'
+          this.$refs.pice[0].style.backgroundImage = 'url(' + endLottery + ')'
         }
       })
     },
     move () {
       if (this.prizeIndex === 0) {
-        this.$refs.pice[this.arrNum[7]].style.backgroundImage = 'url(' + noSelect + ')'
+        this.$refs.pice[this.arrNum[1]].style.backgroundImage = 'url(' + noSelect + ')'
         this.$refs.pice[this.arrNum[this.prizeIndex]].style.backgroundImage = 'url(' + isSelect + ')'
         this.prizeIndex++
-      } else if (this.prizeIndex === 8) {
+      } 
+      else if (this.prizeIndex === 10) {
         this.prizeIndex = 0
-        this.$refs.pice[this.arrNum[7]].style.backgroundImage = 'url(' + noSelect + ')'
+        this.$refs.pice[this.arrNum[9]].style.backgroundImage = 'url(' + noSelect + ')'
         this.$refs.pice[this.arrNum[this.prizeIndex]].style.backgroundImage = 'url(' + isSelect + ')'
         this.prizeIndex++
-      } else {
+      } 
+      else {
         this.$refs.pice[this.arrNum[this.prizeIndex - 1]].style.backgroundImage = 'url(' + noSelect + ')'
         this.$refs.pice[this.arrNum[this.prizeIndex]].style.backgroundImage = 'url(' + isSelect + ')'
         this.prizeIndex++
@@ -342,15 +357,14 @@ export default {
 </script>
 <style lang="less" scoped>
 .wap {
-  background: linear-gradient( #337cf6, #49a6f8); // background: #439AF7;
+  background: linear-gradient( #ff6412, #ff7d16); // background: #439AF7;
   .banner {
     width: 100%;
-    height: 2.5rem;
+    height: 2.3rem;
     position: relative;
-    .bannerImg {
-      width: 100%;
-      height: 2.5rem;
-    }
+    background-image: url(../../assets/img/lottery/banner.png);
+    background-size: cover;
+    background-position: bottom;
     .prizeInfoBtn {
       width: 2rem;
       height: 1.27rem;
@@ -364,11 +378,28 @@ export default {
     }
     .priceChanceBtn {
       // width: 3.1rem;
-      height: 0.6rem;
-      border-radius: 0.6rem;
-      background-color: #ff7a00;
+      height: 0.8rem;
+      //border-radius: 0.8rem;
+      //background-color: #ff7a00;
       position: absolute;
-      bottom: -0.3rem;
+      margin-top: 0.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 0.8rem;
+      font-size: 0.40rem;
+      color: #fff;
+      font-weight: 500;
+      text-align: center;
+      padding: .06rem .4rem;
+    }
+
+    .priceChanceBtn2 {
+      // width: 3.1rem;
+      height: 0.6rem;
+      //border-radius: 0.6rem;
+      //background-color: #ff7a00;
+      position: absolute;
+      margin-top: 1rem;
       left: 50%;
       transform: translateX(-50%);
       line-height: 0.6rem;
@@ -378,6 +409,7 @@ export default {
       text-align: center;
       padding: .06rem .4rem;
     }
+
     .whiteBar {
       position: absolute;
       z-index: 0;
@@ -415,37 +447,86 @@ export default {
   }
   overflow: hidden;
   .box {
-    margin: 0.95rem auto;
+    margin: 0 auto;
+    margin-bottom: 2rem;
     width: 6.9rem;
-    height: 6.9rem;
+    height: 7.5rem;
     padding: 0.35rem;
-    background-color: red;
-    border: 0.15rem solid transparent;
+    background: url("../../assets/img/lottery/lottery.png") no-repeat;
+    background-size: contain;
+    background-position: center;
+    //background-color: red;
+    //border: 0.15rem solid transparent;
     border-radius: 0.2rem;
     box-sizing: border-box;
     position: relative;
-    background: linear-gradient(white, white) padding-box,
-    repeating-linear-gradient(45deg, #FFDE00 0%, #FFDE00 4.6%, #3EAAFF 0, #3EAAFF 10%) 0 / 6.9rem 6.9rem;
-    div {
+    //background: linear-gradient(white, white) padding-box,
+    //repeating-linear-gradient(45deg, #FFDE00 0%, #FFDE00 4.6%, #3EAAFF 0, #3EAAFF 10%) 0 / 6.9rem 6.9rem;
+    .container{
+    margin-top: 0.26rem;
+    margin-left: 0.24rem;
+    width: 100%;
+    height: 100%;
+    }
+    .priceChanceBtn {
+      // width: 3.1rem;
+      height: 0.8rem;
+      border-radius: 0.8rem;
+      background-color: #ff7a00;
+      position: absolute;
+      margin-top: 0.2rem;
+      left: 25%;
+      transform: translateX(-50%);
+      font-size: 0.40rem;
+      color: #fff;
+      font-weight: 500;
+      text-align: center;
+      padding: .06rem .4rem;
+    }
+    .priceChanceBtn2 {
+      // width: 3.1rem;
+      height: 0.8rem;
+      border-radius: 0.8rem;
+      background-color: #ff7a00;
+      position: absolute;
+      margin-top: 0.2rem;
+      left: 75%;
+      transform: translateX(-50%);
+      font-size: 0.40rem;
+      color: #fff;
+      font-weight: 500;
+      text-align: center;
+      padding: .06rem .4rem;
+    }
+    .times{
+      margin-top: 0.2rem;
+      font-size: 0.30rem;
+      color: #fff;
+      font-weight: 500;
+      text-align: center;
+    }
+    .report{
+      margin-top: 0.1rem;
+      font-size: 0.30rem;
+      color: #fff;
+      font-weight: 500;
+      text-align: center;
+    }
+    .item {
       // background: url('../../assets/img/lottery/border.png') no-repeat;
       background-size: 100%;
       float: left;
       width: 1.8rem;
-      height: 1.8rem;
-      margin-right: 0.25rem;
-      margin-bottom: 0.25rem;
+      height: 1.35rem;
+      margin-left: 0.065rem;
+      margin-right: 0.065rem;
+      margin-top: 0.06rem;
+      margin-bottom: 0.06rem;
       position: relative;
       &:nth-child(3n) {
         margin-right: 0;
-      } // &:nth-child(5) {
-      //   background: url('../../assets/img/lottery/prizeBtn.png') no-repeat!important;
-      //   background-size: 100%!important;
-      // }
-      &:nth-child(7),
-      &:nth-child(8),
-      &:nth-child(9) {
-        margin-bottom: 0;
-      } // padding:.29rem .33rem;
+      } 
+
       box-sizing: border-box;
       img {
         width: 1.7rem;

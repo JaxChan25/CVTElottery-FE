@@ -101,7 +101,18 @@
       "picUrlDesc":"http://qdtalk.com/wp-content/uploads/2017/09/8-1.png",
       "prizeId": "e8df88de1878428bb58d0cc9152d8849",
       "commodityName": "3"
-    }],
+    }, {
+      "level": 9,
+      "picUrlDesc":"http://qdtalk.com/wp-content/uploads/2017/09/8-1.png",
+      "prizeId": "e8df88de1878428bb58d0cc9152d8849",
+      "commodityName": "3"
+    }, {
+      "level": 10,
+      "picUrlDesc":"http://qdtalk.com/wp-content/uploads/2017/09/8-1.png",
+      "prizeId": "e8df88de1878428bb58d0cc9152d8849",
+      "commodityName": "3"
+    }]
+    ,
     "beginTime": 1506519900000,
     "endTime": 1601446191000,
     "currTime": 1506751791732,
