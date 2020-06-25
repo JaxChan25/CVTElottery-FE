@@ -38,3 +38,19 @@ export const reqAddressPost = ({ user_id,real_name,mobile,province,city,district
 
 
 
+
+/**
+ * 获取活动
+ */
+export const reqActivity = ({id}) => ajax(BASE_URL + '/activity', {id}, 'GET')
+
+
+
+//export const reqPwdLogin = ({name, pwd}) => ajax(BASE_URL + '/user/login', {"user_name":name, "password":pwd}, 'POST')
+//export const reqSurplustimes = ({user_id, activity_id}) => ajax(BASE_URL + '/surplustimes', {"game_user_id":user_id, "activity_id":activity_id,}, 'POST')
+export const reqSurplustimes = ({game_user_id, activity_id}) => ajax(BASE_URL + '/surplustimes', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
+export const reqDrawLottery = ({game_user_id, activity_id}) => ajax(BASE_URL + '/drawlottery', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
+export const reqUserPrizes = ({game_user_id, activity_id}) => ajax(BASE_URL + '/userprizes', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
+export const reqActivityPrizes = ({activity_id}) => ajax(BASE_URL + '/activityprizes', {"activity_id":activity_id ,"offset":0, "limit":6}, 'POST')
+
+

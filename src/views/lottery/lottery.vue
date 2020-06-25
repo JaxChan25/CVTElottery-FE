@@ -111,6 +111,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import noSelect from '@/assets/img/lottery/noselect.png'
 import isSelect from '@/assets/img/lottery/isselect.png'
