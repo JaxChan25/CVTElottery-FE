@@ -53,4 +53,4 @@ export const reqDrawLottery = ({game_user_id, activity_id}) => ajax(BASE_URL + '
 export const reqUserPrizes = ({game_user_id, activity_id}) => ajax(BASE_URL + '/userprizes', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
 export const reqActivityPrizes = ({activity_id}) => ajax(BASE_URL + '/activityprizes', {"activity_id":activity_id ,"offset":0, "limit":6}, 'POST')
 
-
+export const reqAddress = ({id}) => ajax(BASE_URL + '/address', {id}, 'GET')

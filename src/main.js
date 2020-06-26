@@ -35,6 +35,13 @@ import VDistpicker from 'v-distpicker'
 Vue.component('v-distpicker', VDistpicker)
 
 
+import { HappyScroll } from 'vue-happy-scroll'
+//自定义组件名
+Vue.component('happy-scroll', HappyScroll)
+// 引入css
+import 'vue-happy-scroll/docs/happy-scroll.css'
+
+
 FastClick.attach(document.body)
 Vue.config.productionTip = false
 

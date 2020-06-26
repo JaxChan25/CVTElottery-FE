@@ -1,50 +1,51 @@
 <template>
   <div class="wap" v-title="'抽奖'" ref="wap">
-    <div class="banner">
-      
+    <div  class="banner" ref='ban' >
       <p class="priceChanceBtn">{{title}}</p>
       <p class="priceChanceBtn2">现在有{{people_apply}}人参加活动</p>
       <p style="display: none">{{remainingTimes}}</p>
       
     </div>
 
-    <div class="box">
+  <div class="box" ref="box">
 
-
-<div class="prizers">
-      <div class="prizer">
-        <div class="prizerList" id="prizerList">
-          <ul id="prizerList1">
-            <li v-for="(item,index) in prizeList" :key="index">
-              <span>{{item.name}}</span>
-              <span>{{item.level}}</span>
-              <span class="prizeName">{{item.created_at}}</span>
-            </li>
-          </ul>
-          <ul id="prizerList2"></ul>
+        <div class="prizers">
+          <div class="prizer">
+            <div class="prizerList" id="prizerList">
+              <ul id="prizerList1">
+                <li v-for="(item,index) in roleprize" :key="index">
+                  <span>{{rolename[index]}}</span>
+                  <span>{{rolephone[index]}}</span>
+                  <span class="prizeName">{{item.name}}</span>
+                </li>
+              </ul>
+              <ul id="prizerList2"></ul>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
       <div class="container">
         <div class="item" v-for="(imgLi,index) in prizeList" :key="index" ref="pice" :style="{'background-color':'none'}">
           <p class="click" v-if="index==4 && clickFlage">点击<br>抽奖</p>
           <p class="unclick" v-if="index==4 && !clickFlage">点击<br>抽奖</p>
           <p class="times" v-if="index==7">你还有{{remainingTimes}}次抽奖机会</P>
-          <img :src="imgLi.image" v-if="imgLi.image" />
+          <img v-lazy="imgLi.image" v-if="imgLi.image" />
           <p class="name" v-if="imgLi.name">{{imgLi.name}}</P>
         </div>
       </div>
       <div >
-        <button class="priceChanceBtn" @click="rule">活动规则</button>
-        <button class="priceChanceBtn2" @click="record">中奖记录</button>
+        <a class="priceChanceBtn" @click="rule">活动规则</a>
+        <a class="priceChanceBtn2" @click="record">中奖记录</a>
       </div>
-    </div>
+  </div>
     
 
-    <div class="massage" v-show="prizeInfoShow" @touchmove="touchMove($event)">
+  <div class="massage" v-show="prizeInfoShow" @touchmove="touchMove($event)">
+
+    <p v-if="notshow&&haverecord" style="color:#fff; text-align:center; margin-top:1rem">你已填写过地址</p>
+
       <div class="noPrize" v-if="noPrizeShow">
-        <p>很遗憾，您没有中奖</p>
+        <p class="noprize_p">很遗憾，您没有中奖</p>
         <div class="xiaofu">
           <img src="../../assets/img/lottery/noprize.png" alt="">
         </div>
@@ -52,81 +53,93 @@
           下次再来
         </div>
       </div>
-      <img src="../../assets/img/lottery/circleLight.png" class="circleLight" v-if="havePrizeShow" alt="">
 
-      <div class="havePrize" v-if="havePrizeShow">
-        <div class="oneBar">
-          <img src="../../assets/img/lottery/yellowCycle.png" />
-        </div>
-        <p>恭喜您抽中{{prozeLevel}} {{prizeName}}</p>
+      
+
+      <div class="PrizeShowing" v-if="havePrizeShow">
+        <p class="p1">恭喜您获得</p>
+        <p class="p2">{{prizeName}}</p>
         <div class="proImg">
           <img :src="prizeUrl" alt="">
         </div>
-        <div class="btn" @click="lotteryRecord">
-          <a>立即领取</a>
-        </div>
-        <div class="btn" @click="close_prize">
-          <a>返回抽奖</a>
-        </div>
+        <a class="btn1" @click="lotteryRecord">
+          立即领取
+        </a>
+        <a class="btn2" @click="close_prize">
+          返回抽奖
+        </a>
+        <p v-if="notshow" style="color:#fff; text-align:center">你已填写过地址</p>
       </div>
 
 
       <div class="havePrize" v-if="haverule">
-        <div class="oneBar">
-          <img src="../../assets/img/lottery/yellowCycle.png" />
+        <p class="title">活动规则</p>
+        <div style="height:200px;margin-top:0.5rem;margin-right:0.1rem">
+          <happy-scroll color="rgba(0,0,0,0.5)" size="5" resize>
+            <div class="message2" style="height:2000px;">
+              <p class="list1" v-for="(datas,index) in rule_text" :key="index">{{datas}}</p>
+            </div>
+         </happy-scroll>          
         </div>
-        <p>活动规则</p>
-        <div class="message">
-          <p class="message">{{rule_text}}</p>
-        </div>
-        <div class="btn" @click="closerule">
-          <a>关闭规则</a>
-        </div>
-      </div>
+      </div>  
+      <div class="close_" @click="closerule" v-if="haverule">
+        <img class="close_btn" src="../../assets/img/lottery/close.png" alt="">
+      </div>  
 
 
       <div class="havePrize" v-if="haverecord">
-        <div class="oneBar">
-          <img src="../../assets/img/lottery/yellowCycle.png" />
+        <p class="title">中奖记录</p>
+       <div style="height:200px;margin-top:0.5rem;margin-right:0.1rem">
+          <happy-scroll color="rgba(0,0,0,0.5)" size="5" resize>
+            <div class="message2" style="height:2000px;">
+              <p class="list" v-for="(datas,index) in user_prizes" :key="index">{{datas.level}} {{datas.name}} {{datas.created_at}}</p>
+            </div>
+          </happy-scroll>          
         </div>
-        <p>中奖记录</p>
-        <div class="message">
-          <p class="list" v-for="(datas,index) in user_prizes" :key="index">{{datas.level}} {{datas.name}} {{datas.created_at}}</p>
-        </div>
-        <div class="btn" @click="closerecord">
-          <a>关闭记录</a>
-        </div>
+
+
+        <a class="know" @click="closerecord">
+          我知道了
+        </a>
+        <a class="know2" @click="lotteryRecord">
+          填写地址
+        </a>
       </div>
 
 
       <div class="haveLottery" v-if="haveLottery">
-        <div class="close" @click="close()">
-          <img src="../../assets/img/lottery/close.png" alt="">
-        </div>
         <div class="xiaofu">
           <img src="../../assets/img/lottery/receivedXF1.png" alt="">
         </div>
-        <p>您已经抽过奖啦，不要太贪心哦！</p>
+        <p>您没有抽奖次数啦</p>
         <div class="btn" @click="close()">
           我知道啦
         </div>
       </div>
+
+      <div class="haveLottery" v-if="no_act">
+        <div class="xiaofu">
+          <img src="../../assets/img/lottery/receivedXF1.png" alt="">
+        </div>
+        <p>活动还没开始</p>
+        <div class="btn" @click="closeact()">
+          我知道啦
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
-//import noSelect from '@/assets/img/lottery/noselect.png'
 import isSelect from '@/assets/img/lottery/isselect.png'
-import notStart from '@/assets/img/lottery/noStart.png'
-import endLottery from '@/assets/img/lottery/endLottery.png'
-import prizeBtn from '@/assets/img/lottery/prizeBtn.png'
 import {mapState} from 'vuex'
 import {reqActivity} from '../../api'
 import {reqSurplustimes} from '../../api'
 import {reqDrawLottery} from '../../api'
 import {reqUserPrizes} from '../../api'
 import {reqActivityPrizes} from '../../api'
+import {reqAddress} from '../../api'
 import { Toast } from 'mint-ui'
 export default {
     data () {
@@ -150,19 +163,20 @@ export default {
       prizeIndex: 0,
       arrNum: [0, 1, 2, 5, 8, 11, 10, 9, 6, 3], // 定义转动的顺序
       clickFlage: true, // 点击事件，防止重复点击
-
+      rolename:['陈若邻','陈亮','尹文彪','黄树炫','张冠杰','陈若邻','陈亮','尹文彪','黄树炫','张冠杰'],
+      rolephone:['159****9355','135****6896','189****5139','138****8961','159****9355','135****6896','189****5139','138****8961','159****9355','138****8961',],
+      roleprize:[],
       prizeInfoShow: false, // 显示中奖信息的遮罩层
       noPrizeShow: false, // 没中奖
       havePrizeShow: false, // 中奖了
       haveLottery: false, // 已经抽过奖了
       haverule:false,
       haverecord:false,
+      no_act:false,
       timer1: '',
       timer2: '',
       s1: '',
       s2: '',
-      // lotteryDefineId: '3eb7b32ba51b4f9486e3dd368dad24c4', // 抽奖活动的id
-      lotteryDefineId: this.$route.query.id, // 抽奖活动的id
       winnerNum: '20',
       prizeDesc: [], // 奖品说明
       lotteryDesc: [], // 活动说明
@@ -177,10 +191,12 @@ export default {
       startStatus: '', // 活动开始的状态
       title:'',//活动名称
       people_apply:0,
-      rule_text:'',
+      rule_text:[],
       prizeid:'',
       user_prizes:[],
-      haveprize:''
+      haveprize:'',
+      hasaddress: false,
+      notshow:false,
     }
   },
 
@@ -200,6 +216,7 @@ export default {
     this.getSuplustimes()
     this.getPrizes()
     this.getPrizers()
+    this.haveaddress()
   },
 
   // 销毁组件重新加载
@@ -210,28 +227,28 @@ export default {
 
    async get () {
       let res
-      res = await reqActivity(this.activity_id)
-      
+      res = await reqActivity(this.activity_id)     
       // 根据结果数据处理
       if (res.code === 0) {
+        this.roleprize = JSON.parse(JSON.stringify(res.data.game_prizes)) 
         this.prizeList = res.data.game_prizes
         this.prizeList.splice(4, 0, ' ')
         this.prizeList.splice(7, 0, ' ')
         console.log(this.prizeList)
         this.title=res.data.name
         this.people_apply=res.data.virtual_num+res.data.participate_num
-        this.rule_text=res.data.rule_text
-        this.startStatus=res.data.state
-        this.statusFun(res.data.currTime, res.data.beginTime, res.data.endTime)// 获取状态，开始，未开始，结束
-        /*if (this.prizers && this.prizers.length > 1) {
-          this.prizerListScroll()
-         }*/
+        this.rule_text=res.data.rule_text.split("\\r\\n")
+        this.startStatus=1
+        //console.log(res.data.banner_image)
+        this.$refs.ban.style.backgroundImage = 'url(' + res.data.banner_image + ')'
+        this.$refs.box.style.backgroundImage = 'url(' + res.data.lottery_image + ')'
+        this.$refs.wap.style.backgroundColor = res.data.background_color
         if (this.prizeList && this.prizeList.length > 1) {
           this.prizerListScroll()
          } 
         this.prizeZhuan()
-        } 
-        else {
+      } 
+      else {
           Toast({
             message: res.bizMessage,
             position: 'middle',
@@ -240,6 +257,15 @@ export default {
         }
     },
 
+
+    async haveaddress(){
+      let res
+      res = await reqAddress(this.activity_id)    
+      // 根据结果数据处理
+      if (res.code === 0) {
+        this.hasaddress=true
+      }
+    },
 
     async getSuplustimes () {
       let result
@@ -280,21 +306,7 @@ export default {
       }
     },
 
-    statusFun (c, s, e) {
-      this.$nextTick(() => {
-        if (c < s) { // 当前时间小于开始时间，未开始
-          this.startStatus = 0
-          this.$refs.pice[4].style.backgroundImage = 'url(' + notStart + ')'
-        } else if (c > s && c < e) { // 当前时间大于开始时间，并且小于结束时间，已经开始未结束
-          this.startStatus = 1
-          this.$refs.pice[4].style.backgroundImage = 'url(' + prizeBtn + ')'
-        } else if (c > e) { // 当前时间大于结束时间，已经结束
-          this.startStatus = 2
-          this.$refs.pice[4].style.backgroundImage = 'url(' + endLottery + ')'
-        }
-      })
-    },
-
+    
     move () {
 
       this.prizeIndex++
@@ -336,7 +348,6 @@ export default {
       clearInterval(this.timer1)
       this.timer2 = setInterval(this.move, 300)
       setTimeout(() => { // 顺序打乱
-          console.log("in3")
           this.s2=this.prizeid
       }, 900)
     },
@@ -355,7 +366,7 @@ export default {
           } else {
             prizerList.scrollTop++
           }
-        }, 30)
+        }, 60)
       })
     },
     
@@ -367,14 +378,22 @@ export default {
       res = await reqDrawLottery({game_user_id,activity_id})
       if(res.code===0)
       {
-        console.log("here i am")
-        console.log(res)
-        console.log("hh")
+        this.remainingTimes--  
         this.prizeid=res.data.id
-        this.prozeLevel = res.data.level
+        this.prizeLevel = res.data.level
         this.prizeName = res.data.name
         this.prizeUrl = res.data.image
         this.haveprize = res.data.if_win //1 no 2 yes
+        this.timer1 = setInterval(this.move, 100)                            
+        setTimeout(() => {
+         clearInterval(this.timer1)
+         this.lowSpeed()
+        }, 1200)
+      }
+      else
+      {
+        this.prizeInfoShow = true
+        this.no_act = true
       }
     },
 
@@ -383,33 +402,10 @@ export default {
         this.$refs.pice[4].onclick = () => {
           if (this.remainingTimes > 0) { // 判断剩余抽奖次数
             if (this.clickFlage) {
-              if (this.startStatus === 1) { // 活动开始
-                this.clickFlage = false// 不能点击     
-                this.remainingTimes--      
-                this.lottery()
-
-                this.timer1 = setInterval(this.move, 100)                            
-                setTimeout(() => {
-                  console.log("in1")
-                  clearInterval(this.timer1)
-                  this.lowSpeed()
-                }, 1200)
-
-              } else if (this.startStatus === 0) { // 没开始
-                Toast({
-                  message: '活动尚未开始',
-                  position: 'middle',
-                  duration: 1500
-                })
-              } else if (this.startStatus === 2) { // 已经结束
-                Toast({
-                  message: '活动已经结束',
-                  position: 'middle',
-                  duration: 1500
-                })
-              }
+              this.lottery()
             }
-          } else { // 没有抽奖机会了
+          } 
+          else { // 没有抽奖机会了
             this.prizeInfoShow = true
             this.haveLottery = true
           }
@@ -439,11 +435,19 @@ export default {
       this.clickFlage = true
     },
 
+    closeact () { // 关闭没中奖
+      this.prizeInfoShow = false
+      this.noPrizeShow = false
+      this.no_act = false
+      this.clickFlage = true
+    },
+
     close_prize () { // 关闭没中奖
       this.prizeInfoShow = false
       this.havePrizeShow = false
       this.haveLottery = false
       this.clickFlage = true
+      this.notshow=false
     },
 
     goIndex () {
@@ -462,6 +466,7 @@ export default {
     closerecord(){
       this.prizeInfoShow=false
       this.haverecord=false
+      this.notshow=false
     },
     closerule(){
       this.prizeInfoShow=false
@@ -469,12 +474,12 @@ export default {
     },
 
     lotteryRecord () {
-      this.$router.push({
-        name: 'lotteryRecord',
-        query: {
-          lotteryDefineId: this.lotteryDefineId
-        }
-      })
+      if(this.hasaddress)
+      {
+        this.notshow=true
+      }
+      else
+        this.$router.replace('/address')
     }
 
   }
@@ -489,7 +494,7 @@ export default {
     width: 100%;
     height: 2.3rem;
     position: relative;
-    background-image: url(../../assets/img/lottery/banner.png);
+    //background-image: url(../../assets/img/lottery/banner.png);
     background-size: cover;
     background-position: bottom;
     .prizeInfoBtn {
@@ -578,16 +583,12 @@ export default {
     width: 6.9rem;
     height: 7.5rem;
     padding: 0.35rem;
-    background: url("../../assets/img/lottery/lottery.png") no-repeat;
+    background: no-repeat;
     background-size: contain;
     background-position: center;
-    //background-color: red;
-    //border: 0.15rem solid transparent;
     border-radius: 0.2rem;
     box-sizing: border-box;
     position: relative;
-    //background: linear-gradient(white, white) padding-box,
-    //repeating-linear-gradient(45deg, #FFDE00 0%, #FFDE00 4.6%, #3EAAFF 0, #3EAAFF 10%) 0 / 6.9rem 6.9rem;
     .container{
     margin-top: 0.2rem;
     margin-left: 0.24rem;
@@ -595,34 +596,34 @@ export default {
     height: 100%;
     }
     .priceChanceBtn {
-      // width: 3.1rem;
-      height: 0.8rem;
-      border-radius: 0.8rem;
+      width: 2rem;
       background-color: #ff7a00;
       position: absolute;
       margin-top: 0.2rem;
       left: 25%;
       transform: translateX(-50%);
       font-size: 0.40rem;
-      color: #fff;
+      background-image: linear-gradient(180deg, #FFE077 0%, #FFC541 100%);
+      border-radius: 25px;
+      border-radius: 25px;
       font-weight: 500;
       text-align: center;
-      padding: .06rem .4rem;
+      padding: 0.15rem .4rem;
     }
     .priceChanceBtn2 {
-      // width: 3.1rem;
-      height: 0.8rem;
-      border-radius: 0.8rem;
+      width: 2rem;
       background-color: #ff7a00;
       position: absolute;
       margin-top: 0.2rem;
       left: 75%;
       transform: translateX(-50%);
       font-size: 0.40rem;
-      color: #fff;
+      background-image: linear-gradient(180deg, #FFE077 0%, #FFC541 100%);
+      border-radius: 25px;
+      border-radius: 25px;
       font-weight: 500;
       text-align: center;
-      padding: .06rem .4rem;
+      padding: 0.15rem .4rem;
     }
     .times{
       margin-top: 0.2rem;
@@ -714,7 +715,7 @@ export default {
         overflow: hidden; // .swiper-slide {
         li {
           line-height: 0.45rem;
-          font-size: 0.27rem;
+          font-size: 0.20rem;
           color: #232323; // margin-bottom: .2rem;
           overflow: hidden;
           span {
@@ -826,43 +827,31 @@ export default {
   .massage {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     .noPrize {
-      width: 5.3rem;
-      height: 4.4rem;
-      background-color: #fff;
-      position: absolute;
-      top: 3.2rem;
-      left: 1.1rem;
-      border-radius: 0.4rem;
-      .close {
-        position: absolute;
-        width: 0.51rem;
-        height: 0.51rem;
-        top: -0.8rem;
-        right: 0;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      p {
-        font-size: 0.3rem;
-        color: #707070;
-        margin: 0.38rem auto 0.2rem;
+      width: 100%;
+      height: 100%;
+      
+      .noprize_p{
+        margin-top: 3.5rem;
+        font-family: PingFangSC-Semibold;
+        font-size: 24px;
+        color: #FFFFFF;
         text-align: center;
+        line-height: 18px;
       }
       .xiaofu {
-        width: 2rem;
-        height: 1.7rem;
+        width: 3rem;
+        height: 2rem;
         border-radius: 100%;
-        margin: 0 auto 0.3rem;
+        margin: 0 auto 0.6rem;
         img {
+          margin-top: 0.5rem;
           width: 100%;
           height: 100%;
           display: block;
@@ -934,6 +923,7 @@ export default {
       width: 9.22rem;
       height: 9.22rem;
       position: absolute;
+      
       top: 0.8rem;
       left: 50%;
       margin-left: -4.61rem;
@@ -957,48 +947,160 @@ export default {
         transform: rotate(360deg);
       }
     }
-    .havePrize {
-      width: 5.3rem; // height: 6.1rem;
+
+    .PrizeShowing {
+      width: 100%;
+      height: 100%;
+      .p1{
+        font-family: PingFangSC-Semibold;
+        font-size: 18px;
+        color: #FFFFFF;
+        text-align: center;
+        line-height: 18px;
+        margin-top: 2rem;
+      }
+      .p2{
+        margin-top: 0.4rem;
+        font-family: PingFangSC-Semibold;
+        font-size: 30px;
+        color: #FFCA51;
+        text-align: center;
+        line-height: 30px;
+      }
+      .proImg {
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto 0.36rem;
+        line-height: 2rem;
+        text-align: center;
+        img {
+          margin-top: 0.4rem;
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .btn1 {
+        width: 1.6rem;
+        position: absolute;
+        margin-top: 0.4rem;
+        left: 30%;
+        transform: translateX(-50%);
+        font-size: 0.40rem;
+        border-radius: 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        color: #fff;
+        border: 1px solid #FFFFFF;
+        text-align: center;
+        padding: 0.27rem .4rem;
+      }
+      .btn2 {
+        width: 1.6rem;
+        background-color: #ff7a00;
+        position: absolute;
+        margin-top: 0.4rem;
+        left: 70%;
+        transform: translateX(-50%);
+        font-size: 0.40rem;
+        background-image: linear-gradient(180deg, #FFE077 0%, #FFC541 100%);
+        border-radius: 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        text-align: center;
+        padding: 0.27rem .4rem;
+      }
+    }
+
+    .close_{
+      margin-top: 9.4rem;
+      text-align: center;
+      .close_btn{
+        height: 0.7rem;
+        width: 0.7rem;
+      }    
+    }
+
+
+      .havePrize {
+      width: 5.3rem; 
+      height: 6.1rem;
       padding-bottom: 0.5rem;
       border-radius: 0.4rem;
       position: absolute;
       top: 2.42rem;
       left: 1.1rem;
-      background: #fff url('../../assets/img/lottery/prizinig.png') no-repeat;
-      background-position: top center;
-      background-size: 5.3rem 1.42rem;
-      .oneBar {
-        width: 1.18rem;
-        height: 0.46rem;
+      background: #fff;
+      .know{
+        width: 1.2rem;
+        background: #EEEEEE;
         position: absolute;
-        top: -0.1rem;
-        right: 1.1rem;
-        img {
-          width: 100%;
-          height: 100%;
-        }
+        bottom: 0.3rem;
+        left: 30%;
+        transform: translateX(-50%);
+        font-size: 0.24rem;
+        border-radius: 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        text-align: center;
+        padding: 0.2rem .35rem;
+      }
+      .know2{
+        width: 1.2rem;
+        background-image: linear-gradient(180deg, #FFE077 0%, #FFC541 100%);
+        position: absolute;
+        bottom: 0.3rem;
+        left: 70%;
+        transform: translateX(-50%);
+        font-size: 0.24rem;
+        border-radius: 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        text-align: center;
+        padding: 0.2rem .35rem;
+      }
+      .title{
+        font-family: PingFangSC-Semibold;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333333;
+        text-align: center;
+        line-height: 18px;
+        margin-top: 0.5rem;
       }
       .message{
-        margin: 0 auto;
-        height: 2rem;
-        text-align: center;
+        margin-top: 0.5rem;
+        height: 5rem;
+        width: 4.7rem;
+        font-family: MicrosoftYaHei;
+        font-size: 12px;
+        color: #666666;
+        line-height: 21px;
+        text-align:center;
+        margin: 0.5rem auto;
+      }
+      .message2{
+        height: 5rem;
+        width: 4.7rem;
+        font-family: MicrosoftYaHei;
+        font-size: 12px;
+        color: #666666;
+        line-height: 21px;
+        text-align:center;
+      }
+      .list1{
+        margin-left: 0.2rem;
         font-size: 0.24rem;
       }
       .list{
-        margin: 0 auto;
-        font-size: 0.24rem;
-      }
-      p {
-        padding: 0 0.1rem;
-        font-size: 0.3rem;
-        color: #707070;
-        font-weight: 600;
-        margin: 1.72rem auto 0.2rem;
-        text-align: center;
+        margin-left: 0.2rem;
+        font-size: 0.26rem;
+        height: 0.9rem;
+        line-height: 0.9rem;
+        border-bottom:1px solid #EEEEEE
       }
       .proImg {
         width: 4.1rem;
-        height: 2rem;
+        height: 4.1rem;
         margin: 0 auto 0.36rem;
         line-height: 2rem;
         text-align: center;
@@ -1011,6 +1113,7 @@ export default {
         width: 3rem;
         height: 0.9rem;
         line-height: 0.9rem;
+        margin-top: 3rem;
         margin: 0 auto;
         background: url("../../assets/img/lottery/btn.png") no-repeat;
         background-size: 100%;
@@ -1026,6 +1129,9 @@ export default {
         }
       }
     }
+
+
+
   }
 }
 </style>
