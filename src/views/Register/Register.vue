@@ -43,7 +43,7 @@
           </div>
           <button class="login_submit">注册</button>
         </form>
-        <a href="javascript:;" class="about_us" @click="$router.replace('/login')">已有账号?点击登录</a>
+        <a href="javascript:;" class="about_us" @click="$router.push('/login')">已有账号?点击登录</a>
       </div>
       <!--利用$router.back()返回上一级路由 -->
       <a href="javascript:" class="go_back" @click="$router.back()">
@@ -57,7 +57,8 @@
 <script>
 
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
-import {reqPwdRegister} from '../../api'
+import {reqPwdRegister,reqPwdLogin} from '../../api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -74,6 +75,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['ActivityID'])
   },
   methods: {
     rightPhone (mobile) {
@@ -118,12 +120,29 @@ export default {
       
       // 根据结果数据处理
       if (result.code === 0) {
+        
+        //进行登录
+      result = await reqPwdLogin({name, pwd})
+              // 根据结果数据处理
+      if (result.code === 0) {
         const user = result.data
+        //console.log("login")
+        //console.log(user)
 
         // 将user保存到vuex的state
         this.$store.dispatch('recordUser', user)
-        // 中心
-        this.$router.replace('/')
+
+        //去活动中心
+        var url = "/activity/" + this.$store.state.ActivityID
+        console.log(url)
+        this.$router.replace(url)
+        //this.$router.replace('/activity/1')
+      } else {
+        const msg = result.msg
+        this.showAlert(msg)
+      }
+
+
       } else {
         const msg = result.msg
         this.showAlert(msg)

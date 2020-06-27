@@ -2,7 +2,7 @@
 与后台交互模块 （依赖已封装的ajax函数）
  */
 import ajax from './ajax'
-
+import axios from 'axios'
 
 const BASE_URL = 'http://47.107.119.93:8000/api/v1'
 
@@ -51,6 +51,9 @@ export const reqActivity = ({id}) => ajax(BASE_URL + '/activity', {id}, 'GET')
 export const reqSurplustimes = ({game_user_id, activity_id}) => ajax(BASE_URL + '/surplustimes', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
 export const reqDrawLottery = ({game_user_id, activity_id}) => ajax(BASE_URL + '/drawlottery', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
 export const reqUserPrizes = ({game_user_id, activity_id}) => ajax(BASE_URL + '/userprizes', {"game_user_id":game_user_id, "activity_id":activity_id}, 'POST')
-export const reqActivityPrizes = ({activity_id}) => ajax(BASE_URL + '/activityprizes', {"activity_id":activity_id ,"offset":0, "limit":6}, 'POST')
+//export const reqActivityPrizes = ({activity_id}) => ajax(BASE_URL + '/activityprizes', {"activity_id":activity_id ,"offset":0, "limit":6}, 'POST')
 
-export const reqAddress = ({id}) => ajax(BASE_URL + '/address', {id}, 'GET')
+/*
+忽哟去第
+*/
+export const reqAddress = id => axios.get(BASE_URL +  `/address/${id}`).then(res => res.data);

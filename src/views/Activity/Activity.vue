@@ -23,11 +23,10 @@
             </div>
           </div>
         </div>
-
       <div class="container">
         <div class="item" v-for="(imgLi,index) in prizeList" :key="index" ref="pice" :style="{'background-color':'none'}">
           <p class="click" v-if="index==4 && clickFlage">点击<br>抽奖</p>
-          <p class="unclick" v-if="index==4 && !clickFlage">点击<br>抽奖</p>
+          <p class="unclick" v-if="index==4 && !clickFlage">正在<br>抽奖</p>
           <p class="times" v-if="index==7">你还有{{remainingTimes}}次抽奖机会</P>
           <img v-lazy="imgLi.image" v-if="imgLi.image" />
           <p class="name" v-if="imgLi.name">{{imgLi.name}}</P>
@@ -128,19 +127,21 @@
       </div>
 
     </div>
+    <AlertTip :alertText="alertText" v-show="alertShow" @closeTip="ToLogin"/>
   </div>
 </template>
 
 <script>
 import isSelect from '@/assets/img/lottery/isselect.png'
+import AlertTip from '../../components/AlertTip/AlertTip.vue'
 import {mapState} from 'vuex'
 import {reqActivity} from '../../api'
 import {reqSurplustimes} from '../../api'
 import {reqDrawLottery} from '../../api'
 import {reqUserPrizes} from '../../api'
-import {reqActivityPrizes} from '../../api'
+//import {reqActivityPrizes} from '../../api'
 import {reqAddress} from '../../api'
-import { Toast } from 'mint-ui'
+import { Toast  } from 'mint-ui'
 export default {
     data () {
     return {
@@ -163,7 +164,7 @@ export default {
       prizeIndex: 0,
       arrNum: [0, 1, 2, 5, 8, 11, 10, 9, 6, 3], // 定义转动的顺序
       clickFlage: true, // 点击事件，防止重复点击
-      rolename:['陈若邻','陈亮','尹文彪','黄树炫','张冠杰','陈若邻','陈亮','尹文彪','黄树炫','张冠杰'],
+      rolename:['陈*邻','陈*亮','尹*彪','黄*炫','张*杰','陈*邻','陈*亮','尹*彪','黄*炫','张*杰'],
       rolephone:['159****9355','135****6896','189****5139','138****8961','159****9355','135****6896','189****5139','138****8961','159****9355','138****8961',],
       roleprize:[],
       prizeInfoShow: false, // 显示中奖信息的遮罩层
@@ -200,6 +201,10 @@ export default {
     }
   },
 
+  components: {
+    AlertTip,
+  },
+
   beforeRouteEnter (to, from, next) {
     document.title = '抽奖'
     next()
@@ -213,10 +218,6 @@ export default {
     this.$nextTick(() => {
       this.get()
     })
-    this.getSuplustimes()
-    this.getPrizes()
-    this.getPrizers()
-    this.haveaddress()
   },
 
   // 销毁组件重新加载
@@ -225,7 +226,31 @@ export default {
   },
   methods: {
 
+    ToLogin(){
+      this.alertShow = false
+      this.alertText = ''
+      this.$store.dispatch('recordActivityID',this.activity_id)    
+      this.$router.push('/login')
+    },
+
+    showAlert (alertText) {
+      this.alertShow = true
+      this.alertText = alertText
+    },
+
    async get () {
+
+      if(typeof(this.game_user_id) == "undefined"){
+        const msg = "您尚未登录，请登录后再抽奖吧~"
+        this.showAlert(msg)
+      }
+      else{
+
+      this.getSuplustimes()
+      //this.getPrizes()
+      //this.getPrizers()
+      this.haveaddress()
+    
       let res
       res = await reqActivity(this.activity_id)     
       // 根据结果数据处理
@@ -234,7 +259,7 @@ export default {
         this.prizeList = res.data.game_prizes
         this.prizeList.splice(4, 0, ' ')
         this.prizeList.splice(7, 0, ' ')
-        console.log(this.prizeList)
+        //console.log(this.prizeList)
         this.title=res.data.name
         this.people_apply=res.data.virtual_num+res.data.participate_num
         this.rule_text=res.data.rule_text.split("\\r\\n")
@@ -255,15 +280,22 @@ export default {
             duration: 1500
           })
         }
+      }
+
     },
 
 
     async haveaddress(){
       let res
-      res = await reqAddress(this.activity_id)    
+
+      console.log(this.game_user_id)
+      res = await reqAddress(this.game_user_id)   
+      //console.log(res) 
       // 根据结果数据处理
       if (res.code === 0) {
+        //console.log("here in code") 
         this.hasaddress=true
+        this.notshow=true
       }
     },
 
@@ -285,7 +317,7 @@ export default {
       const {game_user_id,activity_id} = this
       result = await reqUserPrizes({game_user_id,activity_id})   
       if (result.code === 0) {
-        console.log(result.data.items)
+        //console.log(result.data.items)
         this.user_prizes = result.data.items       
       } else {
         const msg = result.msg
@@ -293,18 +325,18 @@ export default {
       }
     },
 
-    async getPrizers(){
-      let result
-      const {activity_id} = this
-      result = await reqActivityPrizes({activity_id})   
-      if (result.code === 0) {
-        console.log(result.data.items)
-        this.prizers = result.data.items       
-      } else {
-        const msg = result.msg
-        this.showAlert(msg)
-      }
-    },
+    // async getPrizers(){
+    //   let result
+    //   const {activity_id} = this
+    //   result = await reqActivityPrizes({activity_id})   
+    //   if (result.code === 0) {
+    //     //console.log(result.data.items)
+    //     this.prizers = result.data.items       
+    //   } else {
+    //     const msg = result.msg
+    //     this.showAlert(msg)
+    //   }
+    // },
 
     
     move () {
@@ -314,7 +346,7 @@ export default {
       this.$refs.pice[this.arrNum[this.prizeIndex%10]].style.backgroundImage = 'url(' + isSelect + ')'
 
       if (this.s2 && this.prizeList[this.arrNum[this.prizeIndex%10]].id == this.s2) {
-        console.log("come in please")
+        //console.log("come in please")
         clearInterval(this.timer1)
         clearInterval(this.timer2)
         this.stop()
@@ -344,7 +376,7 @@ export default {
 
     // 降速
     lowSpeed () {
-      console.log("in2")
+      //console.log("in2")
       clearInterval(this.timer1)
       this.timer2 = setInterval(this.move, 300)
       setTimeout(() => { // 顺序打乱
@@ -373,6 +405,8 @@ export default {
 
     async lottery()
     {
+
+
       let res
       const {game_user_id,activity_id}=this
       res = await reqDrawLottery({game_user_id,activity_id})
@@ -398,11 +432,14 @@ export default {
     },
 
     prizeZhuan () {
+
       this.$nextTick(() => {
         this.$refs.pice[4].onclick = () => {
           if (this.remainingTimes > 0) { // 判断剩余抽奖次数
             if (this.clickFlage) {
+              this.clickFlage = false
               this.lottery()
+              //flag
             }
           } 
           else { // 没有抽奖机会了
@@ -443,6 +480,11 @@ export default {
     },
 
     close_prize () { // 关闭没中奖
+
+      clearInterval(this.timer1)
+      clearInterval(this.timer2)
+      this.s2=''
+
       this.prizeInfoShow = false
       this.havePrizeShow = false
       this.haveLottery = false
@@ -460,6 +502,7 @@ export default {
       this.haverule=true
     },
     record(){
+      this.getPrizes()
       this.prizeInfoShow=true
       this.haverecord=true
     },
@@ -474,12 +517,13 @@ export default {
     },
 
     lotteryRecord () {
+      this.clickFlage = true
       if(this.hasaddress)
       {
         this.notshow=true
       }
       else
-        this.$router.replace('/address')
+        this.$router.push('/address')
     }
 
   }

@@ -44,7 +44,7 @@
           </div>
           <button class="login_submit">登录</button>
         </form>
-        <a href="javascript:;" class="about_us" @click="$router.replace('/register')">未有账号?点击注册</a>
+        <a href="javascript:;" class="about_us" @click="$router.push('/register')">未有账号?点击注册</a>
   
       </div>
       <!--利用$router.back()返回上一级路由 -->
@@ -58,7 +58,7 @@
 
 </template>
 <script>
-
+import {mapState} from 'vuex'
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
 import {reqPwdLogin} from '../../api'
 export default {
@@ -78,7 +78,8 @@ export default {
         rightPhone () {
       // 利用正则对手机号进行匹配，返回布尔值
       return /^1\d{10}$/.test(this.phone)
-    }
+    },
+    ...mapState(['ActivityID'])
   },
   methods: {
 
@@ -112,8 +113,12 @@ export default {
 
         // 将user保存到vuex的state
         this.$store.dispatch('recordUser', user)
-        // 去个人中心界面
-        this.$router.replace('/activity/1')
+
+        //去活动中心
+        var url = "/activity/" + this.$store.state.ActivityID
+        console.log(url)
+        this.$router.replace(url)
+        //this.$router.replace('/activity/1')
       } else {
         const msg = result.msg
         this.showAlert(msg)

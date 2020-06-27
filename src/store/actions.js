@@ -6,11 +6,13 @@ Action:通过操作mutation间接更新state的多个方法的对象
 import {
   reqUserInfo,
   reqLogout,
+
 } from '../api'
 
 import {
   RECEIVE_USER_INFO,
   RESET_USER_INFO,
+  RECEIVE_ACTIVITY_INFO
 } from './mutation-types'
 
 export default {
@@ -30,6 +32,11 @@ export default {
   async logout ({commit}) {
     const result = await reqLogout()
     if (result.code === 0) { commit(RESET_USER_INFO) }
+  },
+
+  // 同步记录活动信息
+  recordActivityID ({commit}, ActivityID) {
+    commit(RECEIVE_ACTIVITY_INFO, {ActivityID})
   },
 
 }

@@ -52,6 +52,7 @@
          
       </div>
       <AlertTip :alertText="alertText" v-show="alertShow" @closeTip="closeTip"/>
+      <AlertTip :alertText="alertText2" v-show="alertShow2" @closeTip="ToActivity"/>
      </div>
   </section>
 </template>
@@ -75,7 +76,9 @@ export default {
       city: '',
       district: '',
       alertText: '', // 提示文本
-      alertShow: false // 是否显示警告框
+      alertText2: '', // 提示文本
+      alertShow: false, // 是否显示警告框
+      alertShow2: false // 是否显示警告框
     }
   },
   components: {
@@ -106,44 +109,59 @@ export default {
       let result
       // 前台表单验证
       const {user_id,real_name,mobile,province,city,district,detail} = this
-      if (!this.province) {
+     
+      if (!province) {
         // 用户名必须指定
         this.showAlert('省份必须指定')
-        return
-      } else if (!this.city) {
+        
+      } else if (!city) {
         // 密码必须指定
         this.showAlert('市必须指定')
-        return
-      } else if (!this.district) {
+        
+      } else if (!district) {
         // 再次密码必须指定
         this.showAlert('区必须指定')
-        return
-      } else if (!this.detail) {
+        
+      } else if (!detail) {
         // 密码必须指定
         this.showAlert('详细地址必须指定')
-        return
+        
       } 
-     
+      else{
+
       // 发送ajax请求密码登陆
       result = await reqAddressPost({ user_id,real_name,mobile,province,city,district,detail})
       
       // 根据结果数据处理
       if (result.code === 0) {
-        this.showAlert('地址添加成功！')
+        this.showAlert2('地址添加成功！点击返回活动页面')
         return
       } else {
         const msg = result.msg
         this.showAlert(msg)
       }
-
+        
+      }
     },
     
     showAlert (alertText) {
       this.alertShow = true
       this.alertText = alertText
     },
+        
+    showAlert2 (alertText2) {
+      this.alertShow2 = true
+      this.alertText2 = alertText2
+    },
     // 关闭警告框
     closeTip () {
+      this.alertShow = false
+      this.alertText = ''
+    },
+
+    // 关闭警告框
+    ToActivity () {
+      this.$router.back()
       this.alertShow = false
       this.alertText = ''
     },

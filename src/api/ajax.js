@@ -14,6 +14,8 @@ export default function ajax (url = '', data = {}, type = 'GET') {
     // （利用axios）异步执行ajax请求
     let promise // 这个内部的promise用来保存axios的返回值(promise对象)
     if (type === 'GET') {
+      
+
       // 准备 url query 参数数据
       let dataStr = '' // 数据拼接字符串，将data连接到url
       Object.keys(data).forEach(item => {
@@ -23,7 +25,7 @@ export default function ajax (url = '', data = {}, type = 'GET') {
       if (dataStr !== '') {
         url = url + '/' + dataStr
       }
-      
+      //console.log(url)
       // 发送 get 请求
       promise = axios.get(url)
     } else {
