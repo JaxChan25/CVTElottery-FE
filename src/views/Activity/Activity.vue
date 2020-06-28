@@ -241,6 +241,31 @@ export default {
    async get () {
 
       if(typeof(this.game_user_id) == "undefined"){
+        let res
+        res = await reqActivity(this.activity_id)     
+      // 根据结果数据处理
+      if (res.code === 0) {
+        this.roleprize = JSON.parse(JSON.stringify(res.data.game_prizes)) 
+        this.prizeList = res.data.game_prizes
+        this.prizeList.splice(4, 0, ' ')
+        this.prizeList.splice(7, 0, ' ')
+        //console.log(this.prizeList)
+        this.title=res.data.name
+        this.people_apply=res.data.virtual_num+res.data.participate_num
+        this.rule_text=res.data.rule_text.split("\r\n")
+        console.log(this.rule_text)
+        this.startStatus=1
+        //console.log(res.data.banner_image)
+        this.$refs.ban.style.backgroundImage = 'url(' + res.data.banner_image + ')'
+        this.$refs.box.style.backgroundImage = 'url(' + res.data.lottery_image + ')'
+        //console.log(res.data.background_color)
+        this.$refs.wap.style.backgroundColor = res.data.background_color
+        if (this.prizeList && this.prizeList.length > 1) {
+          this.prizerListScroll()
+         } 
+        this.prizeZhuan()
+      } 
+
         const msg = "您尚未登录，请登录后再抽奖吧~"
         this.showAlert(msg)
       }
@@ -532,8 +557,7 @@ export default {
 
 <style lang="less" scoped>
 .wap {
-  background: linear-gradient( #ff6412, #ff7d16); // background: #439AF7;
-  
+
   .banner {
     width: 100%;
     height: 2.3rem;

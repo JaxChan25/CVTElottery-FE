@@ -42,7 +42,7 @@ export const reqAddressPost = ({ user_id,real_name,mobile,province,city,district
 /**
  * 获取活动
  */
-export const reqActivity = ({id}) => ajax(BASE_URL + '/activity', {id}, 'GET')
+export const reqActivity = id => axios.get(BASE_URL +  `/activity/${id}`).then(res => res.data);
 
 
 
